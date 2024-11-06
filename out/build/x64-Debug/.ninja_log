@@ -1,3 +1,6 @@
 # ninja log v5
-7	204	7525452097371980	CMakeFiles/TerminalPaint.dir/src/main.cpp.obj	539b755d5c2305c9
-205	283	7525452097972194	TerminalPaint.exe	61017c54a030be5e
+10	249	7526262851479359	CMakeFiles/TerminalPaint.dir/src/main.cpp.obj	539b755d5c2305c9
+245	331	7526265715056408	TerminalPaint.exe	62d045d76a0657c4
+3	318	7526258693593978	CMakeFiles/TerminalPaint.dir/src/export.cpp.obj	c8095cff2a7ad191
+9	333	7526258693797678	CMakeFiles/TerminalPaint.dir/src/tools.cpp.obj	b98880b03a3c7867
+7	244	7526265714401362	CMakeFiles/TerminalPaint.dir/src/screen.cpp.obj	6d649978ce36a0b6

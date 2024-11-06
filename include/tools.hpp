@@ -1,6 +1,8 @@
 #ifndef TOOLS
 #define TOOLS
 
+#include <utility>
+
 class tool {
 public:
 	static int colour;
@@ -11,8 +13,8 @@ public:
 	~tool();
 
 protected:
-	fillSquare(const int xCoord, const int yCoord);
-	fillSquare(const &std::pair<int xCoord, int yCoord>);
+	void fillSquare(const int xCoord, const int yCoord);
+	void fillSquare(const std::pair<int, int>& coords);
 };
 
 class brush : tool {

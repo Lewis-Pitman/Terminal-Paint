@@ -2,13 +2,16 @@
 #define SCREEN
 
 #include <string>
+#include <array>
 
 enum lineType {
+	//For readability
 	dash,
 	number
 };
 
 enum consoleColour {
+	//For use in SetConsoleAttribute()
 	red = 41,
 	yellow = 43,
 	green = 42,
@@ -19,26 +22,28 @@ enum consoleColour {
 
 class screen {
 public:
+	//List of usable commands
 	const std::array<std::string, 3> rootCommands = { "file", "tool", "colour" };
 	const std::array<std::string, 4> fileCommands = { "back", "new", "open", "export"};
 	const std::array<std::string, 4> toolCommands = { "back", "brush", "line", "fill" };
 	const std::array<std::string, 7> colourCommands = { "back", "red", "yellow", "green", "blue", "white", "black"};
 
-	const std::pair<int width, int height> commandViewDimensions;
-	const std::pair<int width, int height> mainViewDimensions;
-	const std::pair<int width, int height> inputViewDimensions;
+	//View dimensions
+	const int padding{ 3 };
+	const std::pair<int, int> commandViewDimensions{ 20, 3 };
+	const std::pair<int, int> mainViewDimensions{ 20, 18 };
+	const std::pair<int, int> inputViewDimensions{ 20, 1 };
 public:
-	screen(std::pair<int commandWidth, int commandHeight> commandDimensions, std::pair<int viewWidth, int viewHeight> viewDimensions, std::pair<int inputWidth, int inputHeight> inputDimensions);
-	~screen();
+	//screen();
+	//~screen();
 
-	drawScreen();
+	void drawScreen();
 
 protected:
-	drawLine(int width, int padding, int type);
+	inline void drawLine(int width, int padding, lineType type);
 
 private:
-	drawCommandView();
+	void drawCommandView();
 };
-
 
 #endif
