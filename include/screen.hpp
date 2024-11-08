@@ -41,6 +41,7 @@ public:
 
 protected:
 	inline void drawLine(int width, int padding, lineType type);
+	inline int printArray(const char* arrayToPrint);
 
 private:
 	void drawCommandView();
