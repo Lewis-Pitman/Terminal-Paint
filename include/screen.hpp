@@ -33,15 +33,16 @@ class screen {
 public:
 	//View dimensions
 	static const int padding{ 3 };
-	const std::pair<int, int> commandViewDimensions{ 20, 3 };
-	const std::pair<int, int> mainViewDimensions{ 50, 18 };
+	const std::pair<int, int> commandViewDimensions{ 20, 2 };
+	const std::pair<int, int> mainViewDimensions{ 50, 50 };
 	const std::pair<int, int> inputViewDimensions{ 20, 1 };
+	//The main view is the only one that actually uses the height value, however the others still have it just in case
 
 private:
 	//List of available commands
 	const std::array<std::string, 3> rootCommands = { "file", "tool", "colour" };
 	const std::array<std::string, 4> fileCommands = { "back", "new", "open", "export" };
-	const std::array<std::string, 4> toolCommands = { "back", "brush", "line", "fill" };
+	const std::array<std::string, 5> toolCommands = { "back", "brush", "line", "fill", "erase"};
 	const std::array<std::string, 7> colourCommands = { "back", "red", "yellow", "green", "blue", "white", "black" };
 
 	//A vector of colours, used for drawing the image
@@ -64,10 +65,11 @@ private:
 
 	//Input View-----------------------------------------------
 	void drawInputView();
+	void drawInputView(std::string description);
 
 	//Main View------------------------------------------------
-	void drawAlert(std::string title, std::string description);
 	void drawMainView();
+	void drawMainView(std::string title, std::string description); //Alert box in centre of screen
 	void resizeMainView(int width, int height);
 
 };
