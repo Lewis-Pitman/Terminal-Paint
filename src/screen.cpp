@@ -80,24 +80,68 @@ inline void screen::drawCommandView(std::string title, std::string description) 
 }
 
 void screen::drawMainView() {
+	drawLine(mainViewDimensions.first, padding, number);
+	drawLine(mainViewDimensions.first, padding, dash);
+
+	std::cout << "|";
+	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
+		for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+			//SetConsoleTextAttribute(hConsole, white); <-- Test implementation (Not working)
+			//SetConsoleTextAttribute(hConsole, pixels[(lineNumber * mainViewDimensions.first) + j]); <-- Implementation using pixels vector (Not working)
+			std::cout << std::setw(padding);
+			std::cout << "."; //A character needs to be present here to format the box correctly. Using spaces or leaving it blank does not function correctly.
+			std::cout << std::setw(padding);
+		}
+		//SetConsoleTextAttribute(hConsole, black); <-- If this were not here, the entire width of the terminal would be set to the last used colour.
+		std::cout << "  .| " << i + 1;
+		std::cout << "\n|";
+	}
+	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+		std::cout << std::setw(padding);
+		std::cout << ".";
+		std::cout << std::setw(padding);
+		//This stops the final line from starting another line, since there are no other lines to be made
+	}
+	std::cout << "  .| " << mainViewDimensions.second;
+
+	drawLine(mainViewDimensions.first, padding, dash);
+}
+
+void screen::drawMainView(std::string title, std::string description) {
+	/*TODO------------------------------
+	have either a seperate function or do it within this function itself:
+	check the line number each time a line is drawn
+	
+	Get the height of the alert box, divide by 2 and add/subtract it to mainViewDimensions.second / 2 to find the line numbers needed. 
+	So if the height of the main screen was 20, the top of the alert box is line 9 and the bottom is line 11.
+	Should be fairly simple to get content displaying inside the box once created
+	*/
+
 	int lineNumber = 0;
 
 	drawLine(mainViewDimensions.first, padding, number);
 	drawLine(mainViewDimensions.first, padding, dash);
 
-	for (int i = 0; i < mainViewDimensions.second; i++) {
-		std::cout << "\n|";
-		for (int j = 0; j < mainViewDimensions.first; j++) {
-			SetConsoleTextAttribute(hConsole, white);
-			//SetConsoleTextAttribute(hConsole, pixels[(lineNumber * mainViewDimensions.first) + j]); might work..? Using above for testing purposes
-			std::cout << std::setw((padding * 2) - 1);
-			std::cout << " ";
+	std::cout << "|";
+	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
+		for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+			std::cout << std::setw(padding);
+			std::cout << ".";
+			std::cout << std::setw(padding);
 		}
-		SetConsoleTextAttribute(hConsole, black);
-		std::cout << "| " << i + 1;
+		std::cout << "  .| " << i + 1;
+		std::cout << "\n|";
 
 		lineNumber++;
 	}
+	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+		std::cout << std::setw(padding);
+		std::cout << ".";
+		std::cout << std::setw(padding);
+	}
+	std::cout << "  .| " << mainViewDimensions.second;
+
+	drawLine(mainViewDimensions.first, padding, dash);
 }
 
 void screen::drawInputView() {
@@ -106,8 +150,15 @@ void screen::drawInputView() {
 	drawLine(inputViewDimensions.first, padding, dash);
 }
 
+void screen::drawInputView(std::string description) {
+	drawLine(inputViewDimensions.first, padding, dash);
+	std::cout << "|";
+	std::cout << description << std::setw((inputViewDimensions.first * padding) - description.length()) << "|";
+	drawLine(inputViewDimensions.first, padding, dash);
+}
+
 void screen::drawScreen() {
-	drawCommandView(file);
-	drawInputView();
+	drawCommandView(tool);
+	drawInputView("Enter a command: ");
 	drawMainView();
 }
