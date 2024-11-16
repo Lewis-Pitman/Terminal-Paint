@@ -12,8 +12,8 @@ screen::screen(int mainViewX, int mainViewY) { //constructor
 	mainViewDimensions = { mainViewX, mainViewY };
 
 	//Capping the size of the alert box based on the size of the main screen:
-	alertViewDimensions.first = (mainViewX > 20) ? 20 : mainViewX / 2; 
-	alertViewDimensions.second = (mainViewY > 20) ? 20 : mainViewY / 2; 
+	alertViewDimensions.first = (mainViewX >= 20) ? 10 : mainViewX / 2; 
+	alertViewDimensions.second = (mainViewY >= 20) ? 8 : mainViewY / 2; 
 
 	pixels.reserve(50 * 50); //Reserve the memory needed for the maximum size.
 }
@@ -138,6 +138,7 @@ void screen::drawMainView() {
 
 void screen::drawMainView(std::string title, std::string description) {
 	int lineNumber = 0;
+	bool titleDifferentiator = true; //Used to know whether to draw the title or description later on
 
 	//Finding the boundaries of the alert box (Middle of the main screen)
 	int topBoundary = (mainViewDimensions.second / 2) - ((alertViewDimensions.second / 2) - 1); //We add or minus 1 to the calculation to allow room for the horizontal lines
@@ -167,6 +168,7 @@ void screen::drawMainView(std::string title, std::string description) {
 		else {
 			//Inside the top and bottom lines
 			if (lineNumber != topBoundary && lineNumber != bottomBoundary) {
+
 				//Left side
 				for (int j = 0; j < leftBoundary - 1; j++) {
 					std::cout << std::setw(padding);
@@ -176,8 +178,13 @@ void screen::drawMainView(std::string title, std::string description) {
 
 				//Alert content
 				std::cout << "|";
-				std::cout << std::setw((alertViewDimensions.first * padding) + 1);
-				std::cout << "|";
+				if (titleDifferentiator) {
+					std::cout << title << std::setw((alertViewDimensions.first * padding) - title.length()) << "|";
+					titleDifferentiator = false;
+				}
+				else {
+					std::cout << description << std::setw((alertViewDimensions.first * padding) - description.length()) << "|";
+				}
 
 				//Right side
 				for (int j = 0; j < rightBoundary - 1; j++) {
@@ -191,7 +198,7 @@ void screen::drawMainView(std::string title, std::string description) {
 
 				lineNumber++;
 			}
-			else {
+			else { //Top and bottom
 				//Left side
 				for (int j = 0; j < leftBoundary; j++) {
 					std::cout << std::setw(padding);
@@ -229,6 +236,12 @@ void screen::drawMainView(std::string title, std::string description) {
 void screen::resizeMainView(int width, int height) {
 	//Lowest screen x = 8 and lowest y = 16
 	//Max screen x and y = 50
+
+	/*
+	drawMainView("Resize image", "Please enter width (Max 50)");
+	drawMainView("Resize image", "Please enter height (Max 50)");
+	drawMainView("Resizing will delete your", "existing image. Continue?");
+	*/
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -253,5 +266,5 @@ void screen::drawInputView(std::string description) {
 void screen::drawScreen() {
 	drawCommandView(tool);
 	drawInputView("Enter a command: ");
-	drawMainView("t", "t");
+	drawMainView("Resizing will delete your", "existing image. Continue?");
 }

@@ -5,7 +5,7 @@
 int temp;
 
 int main() {
-	screen screen(8, 16);
+	screen screen(20, 20);
 	screen.drawScreen();
 
 	std::cin >> temp;
