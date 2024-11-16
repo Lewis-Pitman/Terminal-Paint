@@ -7,28 +7,50 @@
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 
-screen::screen() { //constructor
+screen::screen(int mainViewX, int mainViewY) { //constructor
 	static std::vector<consoleColour> pixels;
+	mainViewDimensions = { mainViewX, mainViewY };
+
+	//Capping the size of the alert box based on the size of the main screen:
+	alertViewDimensions.first = (mainViewX > 20) ? 20 : mainViewX / 2; 
+	alertViewDimensions.second = (mainViewY > 20) ? 20 : mainViewY / 2; 
+
 	pixels.reserve(50 * 50); //Reserve the memory needed for the maximum size.
 }
 
 screen::~screen() {} //Deconstructor
 
-inline void screen::drawLine(int width, int padding, lineType type) {
-	if (type == dash) {
+inline void screen::drawLine(int width, int padding, lineType type, bool breakLine) {
+	if (breakLine) {
+		if (type == dash) {
+			std::cout << "\n";
+			for (int i = 0; i < (width * padding) + 1; i++) {
+				std::cout << "-";
+			}
+		}
+		else{
+			std::cout << "\n";
+			for (int i = 0; i < width; i++) {
+				std::cout << std::setw(padding) << i + 1;
+			}
+		}
 		std::cout << "\n";
-		for (int i = 0; i < (width * padding) + 1; i++) {
-			std::cout << "-";
+	}
+	else {
+		if (type == dash) {
+			for (int i = 0; i < (width * padding) + 1; i++) {
+				std::cout << "-";
+			}
+		}
+		else {
+			for (int i = 0; i < width; i++) {
+				std::cout << std::setw(padding) << i + 1;
+			}
 		}
 	}
-	else{
-		std::cout << "\n";
-		for (int i = 0; i < width; i++) {
-			std::cout << std::setw(padding) << i + 1;
-		}
-	}
-	std::cout << "\n";
 }
+
+//Command Screen--------------------------------------------------------------------------------------------------------------------
 
 inline void screen::printCommands(commandScreenType type) { 
 
@@ -63,25 +85,30 @@ inline void screen::printCommands(commandScreenType type) {
 }
 
 inline void screen::drawCommandView(commandScreenType type) {
-	drawLine(commandViewDimensions.first, padding, dash);
+	drawLine(commandViewDimensions.first, padding, dash, true);
 	std::cout << "|Available commands:" << std::setw((commandViewDimensions.first * padding) - 19) << "|";
 	std::cout << "\n|";
 	printCommands(type);
-	drawLine(commandViewDimensions.first, padding, dash);
+	drawLine(commandViewDimensions.first, padding, dash, true);
 }
 
 inline void screen::drawCommandView(std::string title, std::string description) { //Overload for a custom title and description
-	drawLine(commandViewDimensions.first, padding, dash);
+	drawLine(commandViewDimensions.first, padding, dash, true);
 	std::cout << "|";
 	std::cout << title << std::setw((commandViewDimensions.first * padding) - title.length()) << "|";
 	std::cout << "\n|";
 	std::cout << description << std::setw((commandViewDimensions.first * padding) - description.length()) << "|";
-	drawLine(commandViewDimensions.first, padding, dash);
+	drawLine(commandViewDimensions.first, padding, dash, true);
 }
 
+//---------------------------------------------------------------------------------------------------------------------------------
+
+//Main Screen----------------------------------------------------------------------------------------------------------------------
+
 void screen::drawMainView() {
-	drawLine(mainViewDimensions.first, padding, number);
-	drawLine(mainViewDimensions.first, padding, dash);
+	std::cout << "\n";
+	drawLine(mainViewDimensions.first, padding, number, false);
+	drawLine(mainViewDimensions.first, padding, dash, true);
 
 	std::cout << "|";
 	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
@@ -96,6 +123,8 @@ void screen::drawMainView() {
 		std::cout << "  .| " << i + 1;
 		std::cout << "\n|";
 	}
+
+	//Final line
 	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
 		std::cout << std::setw(padding);
 		std::cout << ".";
@@ -104,36 +133,89 @@ void screen::drawMainView() {
 	}
 	std::cout << "  .| " << mainViewDimensions.second;
 
-	drawLine(mainViewDimensions.first, padding, dash);
+	drawLine(mainViewDimensions.first, padding, dash, true);
 }
 
 void screen::drawMainView(std::string title, std::string description) {
-	/*TODO------------------------------
-	have either a seperate function or do it within this function itself:
-	check the line number each time a line is drawn
-	
-	Get the height of the alert box, divide by 2 and add/subtract it to mainViewDimensions.second / 2 to find the line numbers needed. 
-	So if the height of the main screen was 20, the top of the alert box is line 9 and the bottom is line 11.
-	Should be fairly simple to get content displaying inside the box once created
-	*/
-
 	int lineNumber = 0;
 
-	drawLine(mainViewDimensions.first, padding, number);
-	drawLine(mainViewDimensions.first, padding, dash);
+	//Finding the boundaries of the alert box (Middle of the main screen)
+	int topBoundary = (mainViewDimensions.second / 2) - ((alertViewDimensions.second / 2) - 1); //We add or minus 1 to the calculation to allow room for the horizontal lines
+	int bottomBoundary = topBoundary + ((alertViewDimensions.second / 2) - 1);
+	int leftBoundary = (mainViewDimensions.first / 2) - (alertViewDimensions.first / 2);
+	int rightBoundary = mainViewDimensions.first - leftBoundary - alertViewDimensions.first;
+
+	std::cout << "\n";
+	drawLine(mainViewDimensions.first, padding, number, false);
+	drawLine(mainViewDimensions.first, padding, dash, true);
 
 	std::cout << "|";
 	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
-		for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-			std::cout << std::setw(padding);
-			std::cout << ".";
-			std::cout << std::setw(padding);
+		//Regular screen drawing
+		if (lineNumber < topBoundary || lineNumber > bottomBoundary) {
+			for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+				std::cout << std::setw(padding);
+				std::cout << ".";
+				std::cout << std::setw(padding);
+			}
+			std::cout << "  .| " << i + 1;
+			std::cout << "\n|";
+			
+			lineNumber++;
 		}
-		std::cout << "  .| " << i + 1;
-		std::cout << "\n|";
+		//If we have reached the boundaries for where the alert should go
+		else {
+			//Inside the top and bottom lines
+			if (lineNumber != topBoundary && lineNumber != bottomBoundary) {
+				//Left side
+				for (int j = 0; j < leftBoundary - 1; j++) {
+					std::cout << std::setw(padding);
+					std::cout << "/";
+					std::cout << std::setw(padding);
+				}
 
-		lineNumber++;
+				//Alert content
+				std::cout << "|";
+				std::cout << std::setw((alertViewDimensions.first * padding) + 1);
+				std::cout << "|";
+
+				//Right side
+				for (int j = 0; j < rightBoundary - 1; j++) {
+					std::cout << std::setw(padding);
+					std::cout << "/";
+					std::cout << std::setw(padding);
+				}
+
+				std::cout << "  /| " << i + 1;
+				std::cout << "\n|";
+
+				lineNumber++;
+			}
+			else {
+				//Left side
+				for (int j = 0; j < leftBoundary; j++) {
+					std::cout << std::setw(padding);
+					std::cout << "/";
+				}
+
+				//Horizontal lines
+				drawLine(alertViewDimensions.first, padding, dash, false);
+
+				//Right side
+				for (int j = 0; j < rightBoundary - 1; j++) {
+					std::cout << std::setw(padding);
+					std::cout << "/";
+				}
+
+				std::cout << "  /| " << i + 1;
+				std::cout << "\n|";
+
+				lineNumber++;
+			}
+		}
 	}
+
+	//Final line
 	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
 		std::cout << std::setw(padding);
 		std::cout << ".";
@@ -141,24 +223,35 @@ void screen::drawMainView(std::string title, std::string description) {
 	}
 	std::cout << "  .| " << mainViewDimensions.second;
 
-	drawLine(mainViewDimensions.first, padding, dash);
+	drawLine(mainViewDimensions.first, padding, dash, true);
 }
 
+void screen::resizeMainView(int width, int height) {
+	//Lowest screen x = 8 and lowest y = 16
+	//Max screen x and y = 50
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------
+
+//Input Screen---------------------------------------------------------------------------------------------------------------------
+
 void screen::drawInputView() {
-	drawLine(inputViewDimensions.first, padding, dash);
+	drawLine(inputViewDimensions.first, padding, dash, true);
 	std::cout << "|Input: " << std::setw((inputViewDimensions.first * padding) - 7) << "|";
-	drawLine(inputViewDimensions.first, padding, dash);
+	drawLine(inputViewDimensions.first, padding, dash, true);
 }
 
 void screen::drawInputView(std::string description) {
-	drawLine(inputViewDimensions.first, padding, dash);
+	drawLine(inputViewDimensions.first, padding, dash, true);
 	std::cout << "|";
 	std::cout << description << std::setw((inputViewDimensions.first * padding) - description.length()) << "|";
-	drawLine(inputViewDimensions.first, padding, dash);
+	drawLine(inputViewDimensions.first, padding, dash, true);
 }
+
+//---------------------------------------------------------------------------------------------------------------------------------
 
 void screen::drawScreen() {
 	drawCommandView(tool);
 	drawInputView("Enter a command: ");
-	drawMainView();
+	drawMainView("t", "t");
 }

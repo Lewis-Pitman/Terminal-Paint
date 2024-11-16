@@ -34,8 +34,9 @@ public:
 	//View dimensions
 	static const int padding{ 3 };
 	const std::pair<int, int> commandViewDimensions{ 20, 2 };
-	const std::pair<int, int> mainViewDimensions{ 50, 50 };
 	const std::pair<int, int> inputViewDimensions{ 20, 1 };
+	std::pair<int, int> mainViewDimensions;
+	std::pair<int, int> alertViewDimensions;
 	//The main view is the only one that actually uses the height value, however the others still have it just in case
 
 private:
@@ -49,14 +50,14 @@ private:
 	static std::vector<consoleColour> pixels;
 
 public:
-	screen();
+	screen(int mainViewX, int mainViewY);
 	~screen();
 
 	void drawScreen();
 
 private:
 	//Misc-----------------------------------------------------
-	inline void drawLine(int width, int padding, lineType type);
+	inline void drawLine(int width, int padding, lineType type, bool breakLine);
 
 	//Command View---------------------------------------------
 	inline void printCommands(commandScreenType type);
