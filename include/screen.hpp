@@ -54,6 +54,7 @@ public:
 	~Screen();
 
 	void drawScreen();
+	void resizeMainView(int width, int height, Screen* screenToResize);
 
 private:
 	//Misc-----------------------------------------------------
@@ -71,7 +72,6 @@ private:
 	//Main View------------------------------------------------
 	void drawMainView();
 	void drawMainView(std::string title, std::string description); //Alert box in centre of screen
-	void resizeMainView(int width, int height);
 
 };
 

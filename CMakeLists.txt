@@ -14,5 +14,4 @@ include_directories("include")
 
 else()
 	message(FATAL_ERROR "Terminal Paint only works on Windows")
-
 endif()

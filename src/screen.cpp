@@ -1,12 +1,14 @@
 #include <iostream>
 #include <iomanip>
+#include <ios>
+#
 #include <array>
 #include <Windows.h>
 #include <stdlib.h>
 
 #include "../include/screen.hpp"
 
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Used for setting colour of the terminal
 
 Screen::Screen(int mainViewX, int mainViewY) { //constructor
 	static std::vector<consoleColour> pixels; 
@@ -20,6 +22,59 @@ Screen::Screen(int mainViewX, int mainViewY) { //constructor
 }
 
 Screen::~Screen() {} //Deconstructor
+
+void Screen::resizeMainView(int width, int height, Screen* screenToResize) {
+
+	//DOES NOT WORK!!! FIX! -------------------------------------------------
+
+
+	//Validation:
+	if (width > 50 || width < 8) {
+		system("CLS");
+		drawCommandView("Resize", "Enter a width (Min 8, Max 50)");
+		drawMainView("This width is not valid.", "Please enter dimensions again");
+		std::cout << "Width >>> ";
+		//Code to handle input (Placeholder for now)
+		int newWidth = 0;
+		std::cin >> newWidth;
+
+		system("CLS");
+		drawCommandView("Resize", "Enter a height (Min 16, Max 50)");
+		drawMainView("Please enter the height", "of your new file.");
+		std::cout << "Height >>> ";
+
+		int newHeight = 0;
+		std::cin >> newHeight;
+
+		resizeMainView(newWidth, newHeight, screenToResize);
+	}
+	else if (height > 50 || height < 16) {
+		system("CLS");
+		drawCommandView("Resize", "Enter a width (Min 8, Max 50)");
+		drawMainView("This height is not valid.", "Please enter dimensions again");
+		std::cout << "Width >>> ";
+		//Code to handle input (Placeholder for now)
+
+		int newWidth = 0;
+		std::cin >> newWidth;
+
+		system("CLS");
+		drawCommandView("Resize", "Enter a height (Min 16, Max 50)");
+		drawMainView("Please enter the height", "of your new file.");
+		std::cout << "Height >>> ";
+
+		int newHeight = 0;
+		std::cin >> newHeight;
+
+		resizeMainView(newWidth, newHeight, screenToResize);
+	}
+	else {
+		delete screenToResize;
+		screenToResize = new Screen(width, height);
+		drawScreen();
+	//Code to clear pixels vector -------------(placeholder)-------------
+	}
+}
 
 inline void Screen::drawLine(int width, int padding, lineType type, bool breakLine) {
 	if (breakLine) {
@@ -234,21 +289,10 @@ void Screen::drawMainView(std::string title, std::string description) {
 	drawLine(mainViewDimensions.first, padding, dash, true);
 }
 
-void Screen::resizeMainView(int width, int height) {
-	//Lowest screen x = 8 and lowest y = 16
-	//Max screen x and y = 50
-
-	/*
-	drawMainView("Resize image", "Please enter width (Max 50)");
-	drawMainView("Resize image", "Please enter height (Max 50)");
-	drawMainView("Resizing will delete your", "existing image. Continue?");
-	*/
-}
-
 //---------------------------------------------------------------------------------------------------------------------------------
 
 //Input Screen---------------------------------------------------------------------------------------------------------------------
-
+//Should this be changed to a simple ">>>"? If not I'll have to make an input handler myself to make input appear inside the box...
 void Screen::drawInputView() {
 	drawLine(inputViewDimensions.first, padding, dash, true);
 	std::cout << "|Input: " << std::setw((inputViewDimensions.first * padding) - 7) << "|";
@@ -270,5 +314,7 @@ void Screen::drawScreen() {
 	//The views can be re-arranged to liking
 	drawCommandView(tool);
 	drawMainView("Resizing will delete your", "existing image. Continue?");
-	drawInputView("Enter a command: ");
+	drawInputView("Temporary box?");
+
+	std::cout << "Input >>> ";
 }
