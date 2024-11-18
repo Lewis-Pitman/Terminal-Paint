@@ -29,7 +29,7 @@ enum consoleColour {
 	black = 0x00
 };
 
-class screen {
+class Screen {
 public:
 	//View dimensions
 	static const int padding{ 3 };
@@ -47,11 +47,11 @@ private:
 	const std::array<std::string, 7> colourCommands = { "back", "red", "yellow", "green", "blue", "white", "black" };
 
 	//A vector of colours, used for drawing the image
-	static std::vector<consoleColour> pixels;
+	static std::vector<consoleColour> pixels; // !!!!! Maybe change this to be included in a file.hpp and file.cpp!?
 
 public:
-	screen(int mainViewX, int mainViewY);
-	~screen();
+	Screen(int mainViewX, int mainViewY);
+	~Screen();
 
 	void drawScreen();
 

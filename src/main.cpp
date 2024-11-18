@@ -5,8 +5,13 @@
 int temp;
 
 int main() {
-	screen screen(20, 20);
-	screen.drawScreen();
+	Screen* pScreen = new Screen(20, 20);
+	pScreen->drawScreen();
 
 	std::cin >> temp;
+
+	delete pScreen;
+
+	pScreen = new Screen(40, 25);
+	pScreen->drawScreen();
 }
