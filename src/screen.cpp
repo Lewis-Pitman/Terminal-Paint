@@ -2,13 +2,14 @@
 #include <iomanip>
 #include <array>
 #include <Windows.h>
+#include <stdlib.h>
 
 #include "../include/screen.hpp"
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 
-screen::screen(int mainViewX, int mainViewY) { //constructor
-	static std::vector<consoleColour> pixels;
+Screen::Screen(int mainViewX, int mainViewY) { //constructor
+	static std::vector<consoleColour> pixels; 
 	mainViewDimensions = { mainViewX, mainViewY };
 
 	//Capping the size of the alert box based on the size of the main screen:
@@ -18,9 +19,9 @@ screen::screen(int mainViewX, int mainViewY) { //constructor
 	pixels.reserve(50 * 50); //Reserve the memory needed for the maximum size.
 }
 
-screen::~screen() {} //Deconstructor
+Screen::~Screen() {} //Deconstructor
 
-inline void screen::drawLine(int width, int padding, lineType type, bool breakLine) {
+inline void Screen::drawLine(int width, int padding, lineType type, bool breakLine) {
 	if (breakLine) {
 		if (type == dash) {
 			std::cout << "\n";
@@ -52,7 +53,7 @@ inline void screen::drawLine(int width, int padding, lineType type, bool breakLi
 
 //Command Screen--------------------------------------------------------------------------------------------------------------------
 
-inline void screen::printCommands(commandScreenType type) { 
+inline void Screen::printCommands(commandScreenType type) { 
 
 	std::string commandString = "";
 
@@ -84,7 +85,7 @@ inline void screen::printCommands(commandScreenType type) {
 
 }
 
-inline void screen::drawCommandView(commandScreenType type) {
+inline void Screen::drawCommandView(commandScreenType type) {
 	drawLine(commandViewDimensions.first, padding, dash, true);
 	std::cout << "|Available commands:" << std::setw((commandViewDimensions.first * padding) - 19) << "|";
 	std::cout << "\n|";
@@ -92,7 +93,7 @@ inline void screen::drawCommandView(commandScreenType type) {
 	drawLine(commandViewDimensions.first, padding, dash, true);
 }
 
-inline void screen::drawCommandView(std::string title, std::string description) { //Overload for a custom title and description
+inline void Screen::drawCommandView(std::string title, std::string description) { //Overload for a custom title and description
 	drawLine(commandViewDimensions.first, padding, dash, true);
 	std::cout << "|";
 	std::cout << title << std::setw((commandViewDimensions.first * padding) - title.length()) << "|";
@@ -105,7 +106,7 @@ inline void screen::drawCommandView(std::string title, std::string description) 
 
 //Main Screen----------------------------------------------------------------------------------------------------------------------
 
-void screen::drawMainView() {
+void Screen::drawMainView() {
 	std::cout << "\n";
 	drawLine(mainViewDimensions.first, padding, number, false);
 	drawLine(mainViewDimensions.first, padding, dash, true);
@@ -136,11 +137,11 @@ void screen::drawMainView() {
 	drawLine(mainViewDimensions.first, padding, dash, true);
 }
 
-void screen::drawMainView(std::string title, std::string description) {
+void Screen::drawMainView(std::string title, std::string description) {
 	int lineNumber = 0;
 	bool titleDifferentiator = true; //Used to know whether to draw the title or description later on
 
-	//Finding the boundaries of the alert box (Middle of the main screen)
+	//Finding the boundaries of the alert box (Middle of the main Screen)
 	int topBoundary = (mainViewDimensions.second / 2) - ((alertViewDimensions.second / 2) - 1); //We add or minus 1 to the calculation to allow room for the horizontal lines
 	int bottomBoundary = topBoundary + ((alertViewDimensions.second / 2) - 1);
 	int leftBoundary = (mainViewDimensions.first / 2) - (alertViewDimensions.first / 2);
@@ -233,7 +234,7 @@ void screen::drawMainView(std::string title, std::string description) {
 	drawLine(mainViewDimensions.first, padding, dash, true);
 }
 
-void screen::resizeMainView(int width, int height) {
+void Screen::resizeMainView(int width, int height) {
 	//Lowest screen x = 8 and lowest y = 16
 	//Max screen x and y = 50
 
@@ -248,13 +249,13 @@ void screen::resizeMainView(int width, int height) {
 
 //Input Screen---------------------------------------------------------------------------------------------------------------------
 
-void screen::drawInputView() {
+void Screen::drawInputView() {
 	drawLine(inputViewDimensions.first, padding, dash, true);
 	std::cout << "|Input: " << std::setw((inputViewDimensions.first * padding) - 7) << "|";
 	drawLine(inputViewDimensions.first, padding, dash, true);
 }
 
-void screen::drawInputView(std::string description) {
+void Screen::drawInputView(std::string description) {
 	drawLine(inputViewDimensions.first, padding, dash, true);
 	std::cout << "|";
 	std::cout << description << std::setw((inputViewDimensions.first * padding) - description.length()) << "|";
@@ -263,8 +264,11 @@ void screen::drawInputView(std::string description) {
 
 //---------------------------------------------------------------------------------------------------------------------------------
 
-void screen::drawScreen() {
+void Screen::drawScreen() {
+	system("CLS"); // Clear screen
+
+	//The views can be re-arranged to liking
 	drawCommandView(tool);
-	drawInputView("Enter a command: ");
 	drawMainView("Resizing will delete your", "existing image. Continue?");
+	drawInputView("Enter a command: ");
 }
