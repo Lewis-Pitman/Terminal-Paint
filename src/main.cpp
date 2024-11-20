@@ -9,8 +9,8 @@ int main() {
 	pScreen->drawScreen();
 
 	std::cin >> temp;
-	
-	pScreen->resizeMainView();
+
+	pScreen->resizeMainView(60, 50, pScreen); //Testing the resize function with invalid parameters
 	pScreen->drawScreen();
 
 	std::cin >> temp;
