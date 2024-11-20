@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
 #include <ios>
-#
 #include <array>
 #include <Windows.h>
 #include <stdlib.h>
@@ -10,24 +9,20 @@
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Used for setting colour of the terminal
 
-Screen::Screen(int mainViewX, int mainViewY) { //constructor
+Screen::Screen(File file) { //constructor
 	static std::vector<consoleColour> pixels; 
-	mainViewDimensions = { mainViewX, mainViewY };
+	mainViewDimensions = { file.width, file.height };
 
 	//Capping the size of the alert box based on the size of the main screen:
-	alertViewDimensions.first = (mainViewX >= 20) ? 10 : mainViewX / 2; 
-	alertViewDimensions.second = (mainViewY >= 20) ? 8 : mainViewY / 2; 
+	alertViewDimensions.first = (file.width >= 20) ? 10 : file.width / 2;
+	alertViewDimensions.second = (file.height >= 20) ? 8 : file.height / 2;
 
-	pixels.reserve(50 * 50); //Reserve the memory needed for the maximum size.
+	openedFile = &file;
 }
 
 Screen::~Screen() {} //Deconstructor
 
-void Screen::resizeMainView(int width, int height, Screen* screenToResize) {
-
-	//DOES NOT WORK!!! FIX! -------------------------------------------------
-
-
+void Screen::resizeMainView(int width, int height, Screen* currentScreen) {
 	//Validation:
 	if (width > 50 || width < 8) {
 		system("CLS");
@@ -46,8 +41,9 @@ void Screen::resizeMainView(int width, int height, Screen* screenToResize) {
 		int newHeight = 0;
 		std::cin >> newHeight;
 
-		resizeMainView(newWidth, newHeight, screenToResize);
+		resizeMainView(newWidth, newHeight, this);
 	}
+
 	else if (height > 50 || height < 16) {
 		system("CLS");
 		drawCommandView("Resize", "Enter a width (Min 8, Max 50)");
@@ -66,14 +62,48 @@ void Screen::resizeMainView(int width, int height, Screen* screenToResize) {
 		int newHeight = 0;
 		std::cin >> newHeight;
 
-		resizeMainView(newWidth, newHeight, screenToResize);
+		resizeMainView(newWidth, newHeight, this);
+	}
+
+	else {
+		delete currentScreen;
+		File newFile = File(width, height);
+		currentScreen = new Screen(newFile);
+		drawScreen();
+		//Code to clear pixels vector or make new file -------------(placeholder)-------------
+	}
+}
+
+void Screen::resizeMainView() {
+	system("CLS");
+	drawCommandView("Resize", "Y, N (Default is N)");
+	drawMainView("Resizing will delete the", "opened file. Continue?");
+	std::cout << "Confirm (Y/N) >>> ";
+	char selection;
+	std::cin >> selection;
+
+	if (selection == 'Y' || selection == 'y') {
+		system("CLS");
+		drawCommandView("Resize", "Enter a width (Min 8, Max 50)");
+		drawMainView("Please enter the", "width of the new file");
+		std::cout << "Width >>> ";
+		int width = 0;
+		std::cin >> width;
+
+		system("CLS");
+		drawCommandView("Resize", "Enter a height (Min 16, Max 50)");
+		drawMainView("Please enter the height", "of your new file.");
+		std::cout << "Height >>> ";
+
+		int height = 0;
+		std::cin >> height;
+
+		resizeMainView(width, height, this);
 	}
 	else {
-		delete screenToResize;
-		screenToResize = new Screen(width, height);
 		drawScreen();
-	//Code to clear pixels vector -------------(placeholder)-------------
 	}
+
 }
 
 inline void Screen::drawLine(int width, int padding, lineType type, bool breakLine) {
@@ -169,25 +199,29 @@ void Screen::drawMainView() {
 	std::cout << "|";
 	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
 		for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-			//SetConsoleTextAttribute(hConsole, white); <-- Test implementation (Not working)
-			//SetConsoleTextAttribute(hConsole, pixels[(lineNumber * mainViewDimensions.first) + j]); <-- Implementation using pixels vector (Not working)
+			SetConsoleTextAttribute(hConsole, red);
 			std::cout << std::setw(padding);
 			std::cout << "."; //A character needs to be present here to format the box correctly. Using spaces or leaving it blank does not function correctly.
 			std::cout << std::setw(padding);
 		}
 		//SetConsoleTextAttribute(hConsole, black); <-- If this were not here, the entire width of the terminal would be set to the last used colour.
-		std::cout << "  .| " << i + 1;
+		std::cout << "  .";
+		SetConsoleTextAttribute(hConsole, defaultTerminalColours);
+		std::cout << "| " << i + 1;
 		std::cout << "\n|";
 	}
 
 	//Final line
 	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+		SetConsoleTextAttribute(hConsole, red);
 		std::cout << std::setw(padding);
 		std::cout << ".";
 		std::cout << std::setw(padding);
 		//This stops the final line from starting another line, since there are no other lines to be made
 	}
-	std::cout << "  .| " << mainViewDimensions.second;
+	std::cout << "  .";
+	SetConsoleTextAttribute(hConsole, defaultTerminalColours);
+	std::cout << "|" << mainViewDimensions.second;
 
 	drawLine(mainViewDimensions.first, padding, dash, true);
 }
@@ -211,11 +245,14 @@ void Screen::drawMainView(std::string title, std::string description) {
 		//Regular screen drawing
 		if (lineNumber < topBoundary || lineNumber > bottomBoundary) {
 			for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+				SetConsoleTextAttribute(hConsole, blue);
 				std::cout << std::setw(padding);
 				std::cout << ".";
 				std::cout << std::setw(padding);
 			}
-			std::cout << "  .| " << i + 1;
+			std::cout << "  .";
+			SetConsoleTextAttribute(hConsole, defaultTerminalColours);
+			std::cout << "| " << i + 1;
 			std::cout << "\n|";
 			
 			lineNumber++;
@@ -227,12 +264,14 @@ void Screen::drawMainView(std::string title, std::string description) {
 
 				//Left side
 				for (int j = 0; j < leftBoundary - 1; j++) {
+					SetConsoleTextAttribute(hConsole, yellow);
 					std::cout << std::setw(padding);
 					std::cout << "/";
 					std::cout << std::setw(padding);
 				}
 
 				//Alert content
+				SetConsoleTextAttribute(hConsole, defaultTerminalColours);
 				std::cout << "|";
 				if (titleDifferentiator) {
 					std::cout << title << std::setw((alertViewDimensions.first * padding) - title.length()) << "|";
@@ -243,13 +282,16 @@ void Screen::drawMainView(std::string title, std::string description) {
 				}
 
 				//Right side
+				SetConsoleTextAttribute(hConsole, yellow);
 				for (int j = 0; j < rightBoundary - 1; j++) {
 					std::cout << std::setw(padding);
 					std::cout << "/";
 					std::cout << std::setw(padding);
 				}
 
-				std::cout << "  /| " << i + 1;
+				std::cout << "  /";
+				SetConsoleTextAttribute(hConsole, defaultTerminalColours);
+				std::cout << "| " << i + 1;
 				std::cout << "\n|";
 
 				lineNumber++;
@@ -257,20 +299,25 @@ void Screen::drawMainView(std::string title, std::string description) {
 			else { //Top and bottom
 				//Left side
 				for (int j = 0; j < leftBoundary; j++) {
+					SetConsoleTextAttribute(hConsole, yellow);
 					std::cout << std::setw(padding);
 					std::cout << "/";
 				}
 
 				//Horizontal lines
+				SetConsoleTextAttribute(hConsole, defaultTerminalColours);
 				drawLine(alertViewDimensions.first, padding, dash, false);
 
 				//Right side
+				SetConsoleTextAttribute(hConsole, yellow); //Keep yellow for police tape look?
 				for (int j = 0; j < rightBoundary - 1; j++) {
 					std::cout << std::setw(padding);
 					std::cout << "/";
 				}
 
-				std::cout << "  /| " << i + 1;
+				std::cout << "  /";
+				SetConsoleTextAttribute(hConsole, defaultTerminalColours);
+				std::cout << "| " << i + 1;
 				std::cout << "\n|";
 
 				lineNumber++;
@@ -280,30 +327,27 @@ void Screen::drawMainView(std::string title, std::string description) {
 
 	//Final line
 	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
+		SetConsoleTextAttribute(hConsole, blue);
 		std::cout << std::setw(padding);
 		std::cout << ".";
 		std::cout << std::setw(padding);
 	}
-	std::cout << "  .| " << mainViewDimensions.second;
+	std::cout << "  .";
+	SetConsoleTextAttribute(hConsole, defaultTerminalColours);
+	std::cout << "|" << mainViewDimensions.second;
 
 	drawLine(mainViewDimensions.first, padding, dash, true);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
 
-//Input Screen---------------------------------------------------------------------------------------------------------------------
-//Should this be changed to a simple ">>>"? If not I'll have to make an input handler myself to make input appear inside the box...
-void Screen::drawInputView() {
-	drawLine(inputViewDimensions.first, padding, dash, true);
-	std::cout << "|Input: " << std::setw((inputViewDimensions.first * padding) - 7) << "|";
-	drawLine(inputViewDimensions.first, padding, dash, true);
-}
+//Box -----------------------------------------------------------------------------------------------------------------------------
 
-void Screen::drawInputView(std::string description) {
-	drawLine(inputViewDimensions.first, padding, dash, true);
-	std::cout << "|";
-	std::cout << description << std::setw((inputViewDimensions.first * padding) - description.length()) << "|";
-	drawLine(inputViewDimensions.first, padding, dash, true);
+void Screen::drawBoxView(int width, std::string description) {
+		drawLine(width, padding, dash, true);
+		std::cout << "|";
+		std::cout << description << std::setw((width * padding) - description.length()) << "|";
+		drawLine(width, padding, dash, true);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -314,7 +358,7 @@ void Screen::drawScreen() {
 	//The views can be re-arranged to liking
 	drawCommandView(tool);
 	drawMainView("Resizing will delete your", "existing image. Continue?");
-	drawInputView("Temporary box?");
+	drawBoxView(10, "Temporary box?");
 
 	std::cout << "Input >>> ";
 }
