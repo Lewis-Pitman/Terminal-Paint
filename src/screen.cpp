@@ -9,20 +9,25 @@
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Used for setting colour of the terminal
 
-Screen::Screen(File file) { //constructor
-	static std::vector<consoleColour> pixels; 
-	mainViewDimensions = { file.width, file.height };
+Screen::Screen(File* file) { //constructor
+	mainViewDimensions = { file->width, file->height };
 
 	//Capping the size of the alert box based on the size of the main screen:
-	alertViewDimensions.first = (file.width >= 20) ? 10 : file.width / 2;
-	alertViewDimensions.second = (file.height >= 20) ? 8 : file.height / 2;
+	alertViewDimensions.first = (file->width >= 20) ? 10 : file->width / 2;
+	alertViewDimensions.second = (file->height >= 20) ? 8 : file->height / 2;
 
-	openedFile = &file;
+	openedFile = file;
 }
 
-Screen::~Screen() {} //Deconstructor
+Screen::~Screen() {
+	delete openedFile;
+	openedFile = nullptr;
+}
 
-void Screen::resizeMainView(int width, int height, Screen* currentScreen) {
+//Resizing ------------------------------------------------------------------------------------------------------------------------- 
+
+
+void Screen::resizeMainView(int width, int height) {
 	//Validation:
 	if (width > 50 || width < 8) {
 		system("CLS");
@@ -41,7 +46,7 @@ void Screen::resizeMainView(int width, int height, Screen* currentScreen) {
 		int newHeight = 0;
 		std::cin >> newHeight;
 
-		resizeMainView(newWidth, newHeight, this);
+		resizeMainView(newWidth, newHeight);
 	}
 
 	else if (height > 50 || height < 16) {
@@ -62,15 +67,19 @@ void Screen::resizeMainView(int width, int height, Screen* currentScreen) {
 		int newHeight = 0;
 		std::cin >> newHeight;
 
-		resizeMainView(newWidth, newHeight, this);
+		resizeMainView(newWidth, newHeight);
 	}
 
 	else {
-		delete currentScreen;
-		File newFile = File(width, height);
-		currentScreen = new Screen(newFile);
+		File* newFile = new File(width, height);
+		delete openedFile;
+		openedFile = newFile;
+
+		mainViewDimensions = { width, height };
+		alertViewDimensions.first = (width >= 20) ? 10 : width / 2;
+		alertViewDimensions.second = (height >= 20) ? 8 : height / 2;
+
 		drawScreen();
-		//Code to clear pixels vector or make new file -------------(placeholder)-------------
 	}
 }
 
@@ -98,13 +107,15 @@ void Screen::resizeMainView() {
 		int height = 0;
 		std::cin >> height;
 
-		resizeMainView(width, height, this);
+		resizeMainView(width, height);
 	}
 	else {
 		drawScreen();
 	}
 
 }
+
+//---------------------------------------------------------------------------------------------------------------------------------
 
 inline void Screen::drawLine(int width, int padding, lineType type, bool breakLine) {
 	if (breakLine) {

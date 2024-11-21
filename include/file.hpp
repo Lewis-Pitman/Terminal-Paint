@@ -1,7 +1,7 @@
 #ifndef PAINTFILE
 #define PAINTFILE
 
-#include <vector>
+#include <array>
 
 #include "../include/enums.hpp"
 
@@ -13,16 +13,17 @@
 
 class File {
 public:
-	std::vector<consoleColour> pixels;
+	consoleColour* pixels;
 	const int width;
 	const int height;
 
 public:
 	File(int fileWidth, int fileHeight);
+	File(int fileWidth, int fileHeight, consoleColour* openedFilePixels);
 	~File();
 
-	std::vector<consoleColour> openFile();
-	std::vector<consoleColour> saveFile();
+	void openFile(File*& currentFile);
+	void saveFile();
 };
 
 #endif

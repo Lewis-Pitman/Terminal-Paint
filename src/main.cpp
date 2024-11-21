@@ -6,14 +6,17 @@
 int temp{ 0 };
 
 int main() {
-	File defaultFile = File(20, 20);
+	File* defaultFile = new File(20, 20);
 
 	Screen* pScreen = new Screen(defaultFile);
 	pScreen->drawScreen();
 
 	std::cin >> temp;
 
-	pScreen->resizeMainView(); //Testing the resize function with invalid parameters
+
+	defaultFile->openFile(defaultFile);
+
+	pScreen->resizeMainView();
 	pScreen->drawScreen();
 
 	std::cin >> temp;

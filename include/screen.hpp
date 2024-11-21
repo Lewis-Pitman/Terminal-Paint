@@ -30,7 +30,7 @@ private:
 	const WORD defaultTerminalColours = (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); //So we can change colour easily to print everything outside the main view (White text, black bg)
 
 public:
-	Screen(File file);
+	Screen(File* file);
 	~Screen();
 
 	void drawScreen();
@@ -51,7 +51,7 @@ private:
 	//Main View------------------------------------------------
 	void drawMainView();
 	void drawMainView(std::string title, std::string description); //Alert box in centre of screen
-	void resizeMainView(int width, int height, Screen* currentScreen);
+	void resizeMainView(int width, int height);
 };
 
 #endif
