@@ -18,6 +18,8 @@ public:
 	std::pair<int, int> alertViewDimensions;
 	//The main view is the only one that actually uses the height value, however the others still have it just in case
 
+	File* openedFile = nullptr;
+
 private:
 	//List of available commands
 	const std::array<std::string, 3> rootCommands = { "file", "tool", "colour" };
@@ -25,7 +27,6 @@ private:
 	const std::array<std::string, 5> toolCommands = { "back", "brush", "line", "fill", "erase"};
 	const std::array<std::string, 7> colourCommands = { "back", "red", "yellow", "green", "blue", "white", "black" };
 
-	File* openedFile = nullptr;
 
 	const WORD defaultTerminalColours = (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); //So we can change colour easily to print everything outside the main view (White text, black bg)
 

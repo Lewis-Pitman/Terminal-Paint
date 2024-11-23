@@ -1,14 +1,16 @@
 #ifndef ENUMS
 #define ENUMS
 
+#include <Windows.h>
+
 enum consoleColour {
 	//For use in SetConsoleAttribute()
-	red = 0x40,
-	yellow = 0x60,
-	green = 0x20,
-	blue = 0x10,
-	white = 0x70,
-	black = 0x00
+	red = FOREGROUND_RED | BACKGROUND_RED,
+	yellow = FOREGROUND_RED | FOREGROUND_GREEN | BACKGROUND_RED | BACKGROUND_GREEN,
+	green = FOREGROUND_GREEN | BACKGROUND_GREEN,
+	blue = FOREGROUND_BLUE | BACKGROUND_BLUE,
+	white = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE,
+	black = 0
 };
 
 enum lineType {

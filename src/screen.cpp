@@ -20,8 +20,10 @@ Screen::Screen(File* file) { //constructor
 }
 
 Screen::~Screen() {
+	/*
 	delete openedFile;
 	openedFile = nullptr;
+	*/
 }
 
 //Resizing ------------------------------------------------------------------------------------------------------------------------- 
@@ -210,12 +212,12 @@ void Screen::drawMainView() {
 	std::cout << "|";
 	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
 		for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-			SetConsoleTextAttribute(hConsole, red);
+			SetConsoleTextAttribute(hConsole, openedFile->pixels[(j) + (i * mainViewDimensions.first)]);
 			std::cout << std::setw(padding);
 			std::cout << "."; //A character needs to be present here to format the box correctly. Using spaces or leaving it blank does not function correctly.
 			std::cout << std::setw(padding);
 		}
-		//SetConsoleTextAttribute(hConsole, black); <-- If this were not here, the entire width of the terminal would be set to the last used colour.
+		SetConsoleTextAttribute(hConsole, openedFile->pixels[(mainViewDimensions.first - 1) + (i * mainViewDimensions.first)]);
 		std::cout << "  .";
 		SetConsoleTextAttribute(hConsole, defaultTerminalColours);
 		std::cout << "| " << i + 1;
@@ -224,12 +226,13 @@ void Screen::drawMainView() {
 
 	//Final line
 	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-		SetConsoleTextAttribute(hConsole, red);
+		SetConsoleTextAttribute(hConsole, openedFile->pixels[(j) + (mainViewDimensions.second * (mainViewDimensions.first - 1))]);
 		std::cout << std::setw(padding);
 		std::cout << ".";
 		std::cout << std::setw(padding);
 		//This stops the final line from starting another line, since there are no other lines to be made
 	}
+	SetConsoleTextAttribute(hConsole, openedFile->pixels[(mainViewDimensions.first - 1) + (mainViewDimensions.second * (mainViewDimensions.first - 1))]);
 	std::cout << "  .";
 	SetConsoleTextAttribute(hConsole, defaultTerminalColours);
 	std::cout << "|" << mainViewDimensions.second;
@@ -256,11 +259,12 @@ void Screen::drawMainView(std::string title, std::string description) {
 		//Regular screen drawing
 		if (lineNumber < topBoundary || lineNumber > bottomBoundary) {
 			for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-				SetConsoleTextAttribute(hConsole, blue);
+				SetConsoleTextAttribute(hConsole, openedFile->pixels[(j)+(lineNumber * mainViewDimensions.first)]);
 				std::cout << std::setw(padding);
 				std::cout << ".";
 				std::cout << std::setw(padding);
 			}
+			SetConsoleTextAttribute(hConsole, openedFile->pixels[(mainViewDimensions.first - 1) + (lineNumber * mainViewDimensions.first)]);
 			std::cout << "  .";
 			SetConsoleTextAttribute(hConsole, defaultTerminalColours);
 			std::cout << "| " << i + 1;
@@ -275,7 +279,7 @@ void Screen::drawMainView(std::string title, std::string description) {
 
 				//Left side
 				for (int j = 0; j < leftBoundary - 1; j++) {
-					SetConsoleTextAttribute(hConsole, yellow);
+					SetConsoleTextAttribute(hConsole, black);
 					std::cout << std::setw(padding);
 					std::cout << "/";
 					std::cout << std::setw(padding);
@@ -293,7 +297,7 @@ void Screen::drawMainView(std::string title, std::string description) {
 				}
 
 				//Right side
-				SetConsoleTextAttribute(hConsole, yellow);
+				SetConsoleTextAttribute(hConsole, black);
 				for (int j = 0; j < rightBoundary - 1; j++) {
 					std::cout << std::setw(padding);
 					std::cout << "/";
@@ -310,7 +314,7 @@ void Screen::drawMainView(std::string title, std::string description) {
 			else { //Top and bottom
 				//Left side
 				for (int j = 0; j < leftBoundary; j++) {
-					SetConsoleTextAttribute(hConsole, yellow);
+					SetConsoleTextAttribute(hConsole, black);
 					std::cout << std::setw(padding);
 					std::cout << "/";
 				}
@@ -320,7 +324,7 @@ void Screen::drawMainView(std::string title, std::string description) {
 				drawLine(alertViewDimensions.first, padding, dash, false);
 
 				//Right side
-				SetConsoleTextAttribute(hConsole, yellow); //Keep yellow for police tape look?
+				SetConsoleTextAttribute(hConsole, black); //Keep yellow for police tape look?
 				for (int j = 0; j < rightBoundary - 1; j++) {
 					std::cout << std::setw(padding);
 					std::cout << "/";
@@ -338,11 +342,12 @@ void Screen::drawMainView(std::string title, std::string description) {
 
 	//Final line
 	for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-		SetConsoleTextAttribute(hConsole, blue);
+		SetConsoleTextAttribute(hConsole, openedFile->pixels[(j)+(mainViewDimensions.second * (mainViewDimensions.first - 1))]);
 		std::cout << std::setw(padding);
 		std::cout << ".";
 		std::cout << std::setw(padding);
 	}
+	SetConsoleTextAttribute(hConsole, openedFile->pixels[(mainViewDimensions.first - 1) + (mainViewDimensions.second * (mainViewDimensions.first - 1))]);
 	std::cout << "  .";
 	SetConsoleTextAttribute(hConsole, defaultTerminalColours);
 	std::cout << "|" << mainViewDimensions.second;
@@ -368,6 +373,7 @@ void Screen::drawScreen() {
 
 	//The views can be re-arranged to liking
 	drawCommandView(tool);
+	//drawMainView();
 	drawMainView("Resizing will delete your", "existing image. Continue?");
 	drawBoxView(10, "Temporary box?");
 

@@ -2,30 +2,34 @@
 #define TOOLS
 
 #include <utility>
+#include <vector>
 
-class tool {
+#include "../include/enums.hpp"
+#include "../include/file.hpp"
+
+class Tool {
 public:
 	static int colour;
 	static bool erasing;
 
 public:
-	tool();
-	~tool();
+	Tool();
+	~Tool();
 
-protected:
-	void fillSquare(const int xCoord, const int yCoord);
-	void fillSquare(const std::pair<int, int>& coords);
+//protected:
+	void fillSquare(const int xCoord, const int yCoord, File *&currentFile, consoleColour colour);
+	void fillSquare(const std::vector<std::pair<int, int>> coords, File *&currentFile, consoleColour colour);
 };
 
-class brush : tool {
-
-};
-
-class line : tool {
+class Brush : Tool {
 
 };
 
-class fill : tool {
+class Line : Tool {
+	
+};
+
+class Fill : Tool {
 
 };
 
