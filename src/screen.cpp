@@ -373,8 +373,8 @@ void Screen::drawScreen() {
 
 	//The views can be re-arranged to liking
 	drawCommandView(tool);
-	//drawMainView();
-	drawMainView("Resizing will delete your", "existing image. Continue?");
+	drawMainView();
+	//drawMainView("Resizing will delete your", "existing image. Continue?");
 	drawBoxView(10, "Temporary box?");
 
 	std::cout << "Input >>> ";

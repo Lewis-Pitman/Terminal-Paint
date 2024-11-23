@@ -17,7 +17,7 @@ int main() {
 	std::cin >> temp;
 
 
-	//Testing file functionality
+	/*Testing file functionality
 	defaultFile->openFile(defaultFile);
 	delete pScreen;
 	pScreen = new Screen(defaultFile);
@@ -25,33 +25,38 @@ int main() {
 	pScreen->drawScreen();
 
 	std::cin >> temp;
+	*/
 
 	//Testing tool functionality
-
-	currentTool.fillSquare(20, 20, defaultFile, green);
+	currentTool.fillSquare(5, 5, defaultFile, red);
+	currentTool.fillSquare(6, 5, defaultFile, red);
+	currentTool.fillSquare(7, 5, defaultFile, red);
+	currentTool.fillSquare(8, 5, defaultFile, red);
+	currentTool.fillSquare(8, 6, defaultFile, red);
+	currentTool.fillSquare(8, 7, defaultFile, red);
+	currentTool.fillSquare(8, 8, defaultFile, red);
+	currentTool.fillSquare(7, 8, defaultFile, red);
+	currentTool.fillSquare(6, 8, defaultFile, red);
+	currentTool.fillSquare(5, 8, defaultFile, red);
+	currentTool.fillSquare(5, 7, defaultFile, red);
+	currentTool.fillSquare(5, 6, defaultFile, red);
+	currentTool.fillSquare(5, 5, defaultFile, red);
+	
+	
 	pScreen->drawScreen();
 	std::cin >> temp;
 
-	std::vector<std::pair<int, int>> rectangle;
 
-	//Make a rectangle top right:
-    rectangle.push_back(std::make_pair(16, 2));
-	rectangle.push_back(std::make_pair(16, 3));
-	rectangle.push_back(std::make_pair(16, 4));
-	rectangle.push_back(std::make_pair(16, 5));
-	rectangle.push_back(std::make_pair(16, 6));
-	rectangle.push_back(std::make_pair(17, 6));
-	rectangle.push_back(std::make_pair(18, 6));
-	rectangle.push_back(std::make_pair(18, 5));
-	rectangle.push_back(std::make_pair(18, 4));
-	rectangle.push_back(std::make_pair(18, 3));
-	rectangle.push_back(std::make_pair(18, 2));
-	rectangle.push_back(std::make_pair(17, 2));
-
-	currentTool.fillSquare(rectangle, defaultFile, blue);
-
+	currentTool.fillTool(10, 10, defaultFile, blue);
 	pScreen->drawScreen();
+	std::cin >> temp;
 
+	currentTool.fillTool(6, 6, defaultFile, green);
+	pScreen->drawScreen();
+	std::cin >> temp;
+
+	currentTool.fillTool(5, 5, defaultFile, yellow);
+	pScreen->drawScreen();
 	std::cin >> temp;
 	
 }
