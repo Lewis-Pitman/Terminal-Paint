@@ -41,6 +41,8 @@ int main() {
 	currentTool.fillSquare(5, 7, defaultFile, red);
 	currentTool.fillSquare(5, 6, defaultFile, red);
 	currentTool.fillSquare(5, 5, defaultFile, red);
+
+	currentTool.lineTool(std::make_pair(1, 1), std::make_pair(1, 10), defaultFile, green);
 	
 	
 	pScreen->drawScreen();

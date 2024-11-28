@@ -26,6 +26,7 @@ public:
     ~Tool();
 
     void fillTool(const int xCoord, const int yCoord, File*& currentFile, consoleColour colour);
+    void lineTool(const std::pair<int, int> startCoords, const std::pair<int, int> endCoords, File*& currentFile, consoleColour colour);
 
 public:
     void fillSquare(const int xCoord, const int yCoord, File*& currentFile, consoleColour colour);
