@@ -51,7 +51,7 @@ int main() {
 	pScreen->drawScreen();
 	std::cin >> temp;
 
-	currentTool.lineTool(std::make_pair(1, 2), std::make_pair(8, 8), defaultFile, yellow);
+	currentTool.lineTool(std::make_pair(1, 2), std::make_pair(50, 8), defaultFile, yellow); //Out of bounds does not crash
 	pScreen->drawScreen();
 	std::cin >> temp;
 
