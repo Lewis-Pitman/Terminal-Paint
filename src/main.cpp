@@ -28,6 +28,7 @@ int main() {
 	*/
 
 	//Testing tool functionality
+
 	currentTool.fillSquare(5, 5, defaultFile, red);
 	currentTool.fillSquare(6, 5, defaultFile, red);
 	currentTool.fillSquare(7, 5, defaultFile, red);
@@ -41,24 +42,24 @@ int main() {
 	currentTool.fillSquare(5, 7, defaultFile, red);
 	currentTool.fillSquare(5, 6, defaultFile, red);
 	currentTool.fillSquare(5, 5, defaultFile, red);
-
-	currentTool.lineTool(std::make_pair(1, 1), std::make_pair(1, 10), defaultFile, green);
-	
 	
 	pScreen->drawScreen();
 	std::cin >> temp;
 
 
-	currentTool.fillTool(10, 10, defaultFile, blue);
+	currentTool.fillTool(10, 10, defaultFile, red);
 	pScreen->drawScreen();
 	std::cin >> temp;
 
-	currentTool.fillTool(6, 6, defaultFile, green);
+	currentTool.lineTool(std::make_pair(1, 2), std::make_pair(8, 8), defaultFile, yellow);
 	pScreen->drawScreen();
 	std::cin >> temp;
 
-	currentTool.fillTool(5, 5, defaultFile, yellow);
+	currentTool.lineTool(std::make_pair(10, 2), std::make_pair(1, 1), defaultFile, blue);
 	pScreen->drawScreen();
 	std::cin >> temp;
-	
+
+	currentTool.lineTool(std::make_pair(1, 15), std::make_pair(15, 5), defaultFile, blue);
+	pScreen->drawScreen();
+	std::cin >> temp;
 }

@@ -69,42 +69,36 @@ void Tool::checkSurroundingTiles(const int xCoord, const int yCoord, File*& curr
 //Bresenham's line algorithm
 void Tool::lineTool(const std::pair<int, int> startCoords, const std::pair<int, int> endCoords, File*& currentFile, consoleColour colour) {
     std::vector<std::pair<int, int>> finalCoordsToFill;
-
+    
     int x1 = startCoords.first;
     int y1 = startCoords.second;
-
+    
     int x2 = endCoords.first;
     int y2 = endCoords.second;
-
-    if (x1 > x2) {
-        x1, x2 = x2, x1;
-        y1, y2 = y2, y1;
-    }
-
-    int dx = x2 - x1;
-    int dy = y2 - y1;
-
-    int direction = 1;
-
-    if (dy < 0) {
-        direction = -1;
-    }
-
-    dy *= direction;
-
-    if (dx != 0) {
-        int y = y1;
-        int p = dy * 2 - dx;
-
-        for (int i = 0; i < dx + 1; i++) {
-            finalCoordsToFill.emplace_back(std::make_pair(x1 + i, y));
-                if (p >= 0) {
-                    y += direction;
-                    p = p - 2 * dx;
-            }
-                p = p + 2 * dx;
+    
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    
+    int err = dx - dy;
+    
+    while (true) {
+        finalCoordsToFill.emplace_back(std::make_pair(x1, y1));
+    
+        if (x1 == x2 && y1 == y2) break;
+    
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
         }
     }
-
+    
     fillSquare(finalCoordsToFill, currentFile, colour);
 }
