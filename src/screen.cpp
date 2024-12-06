@@ -368,13 +368,12 @@ void Screen::drawBoxView(int width, std::string description) {
 
 //---------------------------------------------------------------------------------------------------------------------------------
 
-void Screen::drawScreen() {
+void Screen::drawScreen(commandScreenType commandType) {
 	system("CLS"); // Clear screen
 
 	//The views can be re-arranged to liking
-	drawCommandView(tool);
+	drawCommandView(commandType);
 	drawMainView();
-	//drawMainView("Resizing will delete your", "existing image. Continue?");
 	drawBoxView(10, "Temporary box?");
 
 	std::cout << "Input >>> ";

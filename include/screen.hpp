@@ -34,7 +34,7 @@ public:
 	Screen(File* file);
 	~Screen();
 
-	void drawScreen();
+	void drawScreen(commandScreenType commandType);
 	void resizeMainView();
 
 private:
