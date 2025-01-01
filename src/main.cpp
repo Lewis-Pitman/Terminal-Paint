@@ -12,7 +12,7 @@ int main() {
 	Tool currentTool;
 
 	Screen* pScreen = new Screen(defaultFile);
-	pScreen->drawScreen();
+	pScreen->drawScreen(file);
 
 	std::cin >> temp;
 
@@ -43,23 +43,23 @@ int main() {
 	currentTool.fillSquare(5, 6, defaultFile, red);
 	currentTool.fillSquare(5, 5, defaultFile, red);
 	
-	pScreen->drawScreen();
+	pScreen->drawScreen(file);
 	std::cin >> temp;
 
 
 	currentTool.fillTool(10, 10, defaultFile, red);
-	pScreen->drawScreen();
+	pScreen->drawScreen(file);
 	std::cin >> temp;
 
 	currentTool.lineTool(std::make_pair(1, 2), std::make_pair(50, 8), defaultFile, yellow); //Out of bounds does not crash
-	pScreen->drawScreen();
+	pScreen->drawScreen(file);
 	std::cin >> temp;
 
 	currentTool.lineTool(std::make_pair(10, 2), std::make_pair(1, 1), defaultFile, blue);
-	pScreen->drawScreen();
+	pScreen->drawScreen(file);
 	std::cin >> temp;
 
 	currentTool.lineTool(std::make_pair(1, 15), std::make_pair(15, 5), defaultFile, blue);
-	pScreen->drawScreen();
+	pScreen->drawScreen(file);
 	std::cin >> temp;
 }

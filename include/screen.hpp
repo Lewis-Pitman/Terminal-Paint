@@ -23,7 +23,7 @@ public:
 private:
 	//List of available commands
 	const std::array<std::string, 3> rootCommands = { "file", "tool", "colour" };
-	const std::array<std::string, 4> fileCommands = { "back", "new", "open", "export" };
+	const std::array<std::string, 4> fileCommands = { "back", "new", "open", "save" "export" };
 	const std::array<std::string, 5> toolCommands = { "back", "brush", "line", "fill", "erase"};
 	const std::array<std::string, 7> colourCommands = { "back", "red", "yellow", "green", "blue", "white", "black" };
 

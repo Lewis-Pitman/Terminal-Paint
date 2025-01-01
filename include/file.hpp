@@ -22,7 +22,7 @@ public:
 	File(int fileWidth, int fileHeight, consoleColour* openedFilePixels);
 	~File();
 
-	void openFile(File*& currentFile);
+	void openFile();
 	void saveFile();
 };
 

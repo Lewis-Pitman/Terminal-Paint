@@ -27,5 +27,26 @@ enum commandScreenType {
 	colour
 };
 
+enum command {
+	backCommand,
+	fileCommand,
+	toolCommand,
+	colourCommand,
+	newCommand,
+	openCommand,
+	saveCommand,
+	exportCommand,
+	brushCommand,
+	lineCommand,
+	fillCommand,
+	eraseCommand,
+	redCommand,
+	yellowCommand,
+	greenCommand,
+	blueCommand,
+	whiteCommand,
+	blackCommand
+};
+
 
 #endif

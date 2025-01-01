@@ -9,6 +9,7 @@
 #include "../include/file.hpp"
 
 //Custom hash function for std::pair<int, int>, as std::unordered_set (Used for fill tool) doesn't support it
+//Needed for the fill tool to work
 struct pair_hash {
     template <class T1, class T2>
     std::size_t operator() (const std::pair<T1, T2>& pair) const {
@@ -17,9 +18,6 @@ struct pair_hash {
 };
 
 class Tool {
-public:
-    const static int colour {blue};
-    static bool erasing;
 
 public:
     Tool();

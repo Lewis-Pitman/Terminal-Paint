@@ -22,7 +22,8 @@ File::~File() {
     delete[] pixels;
 }
 
-void File::openFile(File*& currentFile) {
+void File::openFile() {
+    File* currentFile = this;
     std::ifstream file("C:/Users/Lewis/Desktop/TPAINT_Files/open.TPAINT"); //Test directory, will be changed in final build
     std::string line;
     consoleColour* newPixels = nullptr;
@@ -32,32 +33,35 @@ void File::openFile(File*& currentFile) {
     int height = 0;
 
     if (file.is_open()) {
+        try {
+            while (std::getline(file, line)) {
+                if (lineNumber == 0) {
+                    width = std::stoi(line);
+                    lineNumber++;
+                }
+                else if (lineNumber == 1) {
+                    height = std::stoi(line);
+                    newPixels = new consoleColour[width * height];
+                    lineNumber++;
+                }
+                else {
 
-        while (std::getline(file, line)) { 
-            if (lineNumber == 0) {
-                width = std::stoi(line);
-                lineNumber++;
-            }
-            else if (lineNumber == 1){
-                height = std::stoi(line);
-                newPixels = new consoleColour[width * height];
-                lineNumber++;
-            }
-            else {
+                    newPixels[lineNumber - 2] = consoleColour(std::stoi(line));
 
-                newPixels[lineNumber - 2] = consoleColour(std::stoi(line));
-
-                lineNumber++;
+                    lineNumber++;
+                }
             }
+
+            File* newFile = new File(width, height, newPixels);
+            delete currentFile;
+            currentFile = newFile;
         }
-
-        File* newFile = new File(width, height, newPixels);
-        delete currentFile;
-        currentFile = newFile;
-
+        catch (const std::exception& e) {
+            //--- error message
+        }
     }
     else {
-        //--- error
+        //--- error message
     }
 }
 
@@ -77,6 +81,6 @@ void File::saveFile() {
         file.close();
     }
     else {
-        //Display an alert to say there was an error??
+        //--- error message
     }
 }

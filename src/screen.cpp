@@ -81,7 +81,7 @@ void Screen::resizeMainView(int width, int height) {
 		alertViewDimensions.first = (width >= 20) ? 10 : width / 2;
 		alertViewDimensions.second = (height >= 20) ? 8 : height / 2;
 
-		drawScreen();
+		drawScreen(file);
 	}
 }
 
@@ -112,7 +112,7 @@ void Screen::resizeMainView() {
 		resizeMainView(width, height);
 	}
 	else {
-		drawScreen();
+		drawScreen(file);
 	}
 
 }
