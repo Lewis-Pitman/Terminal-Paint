@@ -1,15 +1,54 @@
+#include <iostream>
+#include <filesystem>
 #include <string>
 
 #include "../include/paint.hpp"
 #include "../include/enums.hpp"
 
+std::string temp; //This is used to pause the program to allow the user to view a message
+
+//Tool variables
+std::pair<int, int> inputtedCoordinates;
+std::pair<int, int> startPixelCoords;
+std::pair<int, int> endPixelCoords;
+
+Paint::Paint() {
+	currentFile = new File(20, 20);
+	currentScreen = new Screen(currentFile);
+	currentTool = new Tool();
+
+	//Create directories if they do not exist
+	if (!std::filesystem::exists(tpaintSavesDirectory)) {
+		std::filesystem::create_directory(tpaintSavesDirectory);
+	}
+
+	if (!std::filesystem::exists(bmpExportsDirectory)) {
+		std::filesystem::create_directory(bmpExportsDirectory);
+	}
+}
+
+Paint::~Paint() {
+	delete currentFile;
+	delete currentScreen;
+	delete currentTool;
+}
+
 void Paint::Run() {
+	std::string inputtedCommand{ "" };
+
+	//!!!! convert command to lowercase!!
+
+	currentScreen->drawScreen(currentCommandScreen);
+
 	while (true){
-		//Add main loop
+		std::cin >> inputtedCommand;
+		handleInput(inputtedCommand, currentCommandScreen);
 	}
 }
 
 command Paint::getCommand(std::string command) {
+	//Switch case does not support a string
+	//This is an efficient alternative to get an enum from a string
 	auto it = commandMap.find(command);
 	if (it != commandMap.end()) {
 		return it->second;
@@ -21,15 +60,20 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 		switch (getCommand(command)) {
 		case fileCommand:
 			currentCommandScreen = file;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case toolCommand:
 			currentCommandScreen = tool;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case colourCommand:
 			currentCommandScreen = colour;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		default:
-			//Not recognised message
+			currentScreen->drawScreen("Command not recognised. Enter anything to dismiss");
+			std::cin >> temp;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		}
 	}
@@ -37,31 +81,57 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 		switch (getCommand(command)) {
 		case backCommand:
 			currentCommandScreen = root;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case newCommand:
-			//UI to get dimensions
+			currentScreen->resizeMainView(); //Screen has a built in function to do this
 
 			delete currentFile;
 			currentFile = new File(1, 1); //Replace w/ input
-			//Refresh screen
-
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case openCommand:
-			//UI to get directory/name of file in generated directory..?
+			currentScreen->drawScreen("Opening a file will delete the currently opened file. enter y to continue, or anything else to cancel");
+			std::cin >> temp;
 
-			currentFile->openFile(); //Add a parameter for directory
+			if (temp == "y" || temp == "Y") {
+				while(true){
+					currentScreen->drawScreen("Enter the name of the file as it appears in the folder TPAINT saves");
+					std::cin >> temp;
+					if (currentFile->openFile(tpaintSavesDirectory + temp + ".TPAINT")) {
+						break;
+					}
+					else {
+						currentScreen->drawScreen("Something went wrong. Keep in mind the name is case sensitive. Enter anything to dismiss");
+						std::cin >> temp;
+					}
+				}
+			}
+
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case saveCommand:
-			//UI to get directory
-
-			currentFile->saveFile(); //Add a parameter for directory
-
-			//UI to indicate it was successful/unsuccessful
+			currentScreen->drawScreen("Files are saved in the TPAINT saves folder in the same folder this exe is located. Enter a name:");
+			std::cin >> temp;
+			currentFile->saveFile(tpaintSavesDirectory + temp + ".TPAINT");
+			
+			currentScreen->drawScreen("Save successful. Enter anything to dismiss");
+			std::cin >> temp;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case exportCommand:
+			currentScreen->drawScreen("Exports are saved in the BMP exports folder in the same folder this exe is located. Enter a name:");
+			std::cin >> temp;
+			currentFile->exportFile(tpaintSavesDirectory + temp + ".TPAINT");
+
+			currentScreen->drawScreen("Export successful. Enter anything to dismiss");
+			std::cin >> temp;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		default:
-			//Not recognised message
+			currentScreen->drawScreen("Command not recognised. Enter anything to dismiss");
+			std::cin >> temp;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		}
 	}
@@ -69,15 +139,39 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 		switch (getCommand(command)) {
 		case backCommand:
 			currentCommandScreen = root;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case brushCommand:
-			//Logic to get screen object and invoke brush
+			currentScreen->drawScreen("Please enter the X coordinate of the pixel you'd like to brush");
+			std::cin >> inputtedCoordinates.first;
+			currentScreen->drawScreen("Please enter the Y coordinate of the pixel you'd like to brush");
+			std::cin >> inputtedCoordinates.second;
+
+			currentTool->fillSquare(inputtedCoordinates.first, inputtedCoordinates.second, currentFile, currentColour);
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case lineCommand:
-			//Logic to get screen object and invoke line
+			currentScreen->drawScreen("Please enter the X coordinate of the start pixel");
+			std::cin >> startPixelCoords.first;
+			currentScreen->drawScreen("Please enter the Y coordinate of the start pixel");
+			std::cin >> startPixelCoords.second;
+
+			currentScreen->drawScreen("Please enter the X coordinate of the end pixel");
+			std::cin >> endPixelCoords.first;
+			currentScreen->drawScreen("Please enter the Y coordinate of the end pixel");
+			std::cin >> endPixelCoords.second;
+
+			currentTool->lineTool(startPixelCoords, endPixelCoords, currentFile, currentColour);
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case fillCommand:
-			//Logic to get screen object and invoke fill
+			currentScreen->drawScreen("Please enter the X coordinate of the pixel you'd like to fill");
+			std::cin >> inputtedCoordinates.first;
+			currentScreen->drawScreen("Please enter the Y coordinate of the pixel you'd like to fill");
+			std::cin >> inputtedCoordinates.second;
+
+			currentTool->fillTool(inputtedCoordinates.first, inputtedCoordinates.second, currentFile, currentColour);
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case eraseCommand:
 			if (erasing) {
@@ -91,7 +185,9 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 			}
 			break;
 		default:
-			//Not recognised message
+			currentScreen->drawScreen("Command not recognised. Enter anything to dismiss");
+			std::cin >> temp;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		}
 	}
@@ -99,27 +195,36 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 		switch (getCommand(command)) {
 		case backCommand:
 			currentCommandScreen = root;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case redCommand:
 			currentColour = red;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case yellowCommand:
 			currentColour = yellow;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case greenCommand:
 			currentColour = green;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case blueCommand:
 			currentColour = blue;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case whiteCommand:
 			currentColour = white;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		case blackCommand:
 			currentColour = black;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		default:
-			//Not recognised message
+			currentScreen->drawScreen("Command not recognised. Enter anything to dismiss");
+			std::cin >> temp;
+			currentScreen->drawScreen(currentCommandScreen);
 			break;
 		}
 	}

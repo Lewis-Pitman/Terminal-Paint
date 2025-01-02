@@ -10,7 +10,7 @@
 #include "../include/file.hpp"
 
 class Screen {
-public:
+private:
 	//View dimensions
 	static const int padding{ 3 };
 	const std::pair<int, int> commandViewDimensions{ 20, 2 };
@@ -23,7 +23,7 @@ public:
 private:
 	//List of available commands
 	const std::array<std::string, 3> rootCommands = { "file", "tool", "colour" };
-	const std::array<std::string, 4> fileCommands = { "back", "new", "open", "save" "export" };
+	const std::array<std::string, 5> fileCommands = { "back", "new", "open", "save", "export" };
 	const std::array<std::string, 5> toolCommands = { "back", "brush", "line", "fill", "erase"};
 	const std::array<std::string, 7> colourCommands = { "back", "red", "yellow", "green", "blue", "white", "black" };
 
@@ -34,7 +34,9 @@ public:
 	Screen(File* file);
 	~Screen();
 
-	void drawScreen(commandScreenType commandType);
+	void drawScreen(commandScreenType commandType); //Used to control the command screen (Whether it displays root, file, colour etc)
+	void drawScreen(std::string message); //Used for pop-up dialogue above the main screen
+	void drawScreen(std::string aboveMessage, std::string title, std::string mainMessage); //Used for dialogue overlay on main screen
 	void resizeMainView();
 
 private:

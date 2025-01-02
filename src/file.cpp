@@ -23,9 +23,9 @@ File::~File() {
     delete[] pixels;
 }
 
-void File::openFile() {
+bool File::openFile(std::string directory) {
     File* currentFile = this;
-    std::ifstream file("C:/Users/Lewis/Desktop/TPAINT_Files/open.TPAINT"); //Test directory, will be changed in final build
+    std::ifstream file("C:/Users/Lewis/Desktop/Code projects/open.TPAINT"); //Test directory, will be changed in final build
     std::string line;
     consoleColour* newPixels = nullptr;
     int lineNumber = 0;
@@ -56,18 +56,17 @@ void File::openFile() {
             File* newFile = new File(width, height, newPixels);
             delete currentFile;
             currentFile = newFile;
+            return true;
         }
         catch (const std::exception& e) {
-            //--- error message
+            return false;
         }
     }
-    else {
-        //--- error message
-    }
+    return false;
 }
 
-void File::saveFile() {
-    std::ofstream file("C:/Users/Lewis/Desktop/TPAINT_Files/test.TPAINT"); //Test directory, will be changed in final build
+void File::saveFile(std::string directory) {
+    std::ofstream file("C:/Users/Lewis/Desktop/Code projects/SAVED.TPAINT"); //Test directory, will be changed in final build
 
     if (file.is_open()) {
         //Header containing width and height
@@ -86,10 +85,10 @@ void File::saveFile() {
     }
 }
 
-void File::exportFile() {
+void File::exportFile(std::string directory) {
     //Exports the created image to a BMP
 
-    std::ofstream file("C:/Users/Lewis/Desktop/bmptest/image.bmp", std::ios::binary);
+    std::ofstream file("C:/Users/Lewis/Desktop/Code projects/exported.bmp", std::ios::binary);
 
     //Calculate the size of one row (width * 3 for RGB)
     std::uint32_t rowSize = width * 3;
@@ -136,7 +135,7 @@ void File::exportFile() {
 
     unsigned char* pixelData = new unsigned char[width * height * 3];
 
-    //BMP starts from bottom left and draws upwards.
+    //BMP starts from bottom left and draws upwards
     for (int i = 0; i < width * height; i++) { 
         switch (pixels[i]) {
         case red:
@@ -180,7 +179,7 @@ void File::exportFile() {
         file.write(reinterpret_cast<char*>(bitMapInfoHeader), sizeof(bitMapInfoHeader));
 
         //Pixel data (with padding)
-        for (int y = height - 1; y >= 0; --y) {
+        for (int y = height - 1; y >= 0; y--) {
             file.write(reinterpret_cast<char*>(&pixelData[y * width * 3]), width * 3);
 
             //If row size isn't a multiple of 4, write padding bytes

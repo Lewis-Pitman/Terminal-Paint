@@ -3,9 +3,12 @@
 
 #include <string>
 #include <unordered_map>
+#include <filesystem>
 
 #include "../include/enums.hpp"
 #include "../include/file.hpp"
+#include "../include/screen.hpp"
+#include "../include/tools.hpp"
 
 class Paint {
 
@@ -13,6 +16,23 @@ public:
 	std::string inputtedCommand{ "" };
 
 private:
+	//Components -> Consists of a file, a screen, and a tool
+	File* currentFile;
+	Screen* currentScreen;
+	Tool* currentTool;
+
+	//Variables
+	commandScreenType currentCommandScreen{root};
+	consoleColour currentColour{ red };
+
+	bool erasing;
+	consoleColour erasingTemp{white};
+
+	std::string rootDirectory = std::filesystem::current_path().root_path().string();
+	std::string tpaintSavesDirectory = rootDirectory + "\\TPAINT saves";
+	std::string bmpExportsDirectory = rootDirectory + "\\BMP exports";
+
+	//Command map for processing input
 	std::unordered_map<std::string, command> commandMap = {
 		{"back", backCommand},
 		{"file", fileCommand},
@@ -22,6 +42,7 @@ private:
 		{"open", openCommand},
 		{"save", saveCommand},
 		{"export", exportCommand},
+		{"brush", brushCommand},
 		{"line", lineCommand},
 		{"fill", fillCommand},
 		{"erase", eraseCommand},
@@ -33,13 +54,6 @@ private:
 		{"black", blackCommand},
 	};
 
-	commandScreenType currentCommandScreen{root};
-	File* currentFile = new File(20, 20);
-
-	consoleColour currentColour;
-
-	bool erasing;
-	consoleColour erasingTemp{white};
 
 public:
 	Paint();

@@ -2,6 +2,7 @@
 #define PAINTFILE
 
 #include <array>
+#include <string>
 
 #include "../include/enums.hpp"
 
@@ -22,9 +23,9 @@ public:
 	File(int fileWidth, int fileHeight, consoleColour* openedFilePixels);
 	~File();
 
-	void openFile();
-	void saveFile();
-	void exportFile();
+	bool openFile(std::string directory);
+	void saveFile(std::string directory);
+	void exportFile(std::string directory);
 };
 
 #endif

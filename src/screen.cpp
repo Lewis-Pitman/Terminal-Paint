@@ -212,7 +212,7 @@ void Screen::drawMainView() {
 	std::cout << "|";
 	for (int i = 0; i < mainViewDimensions.second - 1; i++) {
 		for (int j = 0; j < mainViewDimensions.first - 1; j++) {
-			SetConsoleTextAttribute(hConsole, openedFile->pixels[(j) + (i * mainViewDimensions.first)]);
+			SetConsoleTextAttribute(hConsole, openedFile->pixels[(j) + (i * (mainViewDimensions.first))]);
 			std::cout << std::setw(padding);
 			std::cout << "."; //A character needs to be present here to format the box correctly. Using spaces or leaving it blank does not function correctly.
 			std::cout << std::setw(padding);
@@ -374,7 +374,24 @@ void Screen::drawScreen(commandScreenType commandType) {
 	//The views can be re-arranged to liking
 	drawCommandView(commandType);
 	drawMainView();
-	drawBoxView(10, "Temporary box?");
+
+	std::cout << "Input >>> ";
+}
+
+void Screen::drawScreen(std::string message) {
+	system("CLS");
+
+	drawBoxView(message.length() / 2, message);
+	drawMainView();
+
+	std::cout << "Input >>> ";
+}
+
+void Screen::drawScreen(std::string aboveMessage, std::string title, std::string mainMessage) {
+	system("CLS");
+
+	drawBoxView(aboveMessage.length() / 2, aboveMessage);
+	drawMainView(title, mainMessage);
 
 	std::cout << "Input >>> ";
 }
