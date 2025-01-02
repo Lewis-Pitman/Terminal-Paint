@@ -7,7 +7,7 @@
 int temp{ 0 };
 
 int main() {
-	File* defaultFile = new File(20, 20);
+	File* defaultFile = new File(25, 25);
 
 	Tool currentTool;
 
@@ -61,5 +61,6 @@ int main() {
 
 	currentTool.lineTool(std::make_pair(1, 15), std::make_pair(15, 5), defaultFile, blue);
 	pScreen->drawScreen(file);
+	defaultFile->exportFile();
 	std::cin >> temp;
 }

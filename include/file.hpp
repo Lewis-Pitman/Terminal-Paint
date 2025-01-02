@@ -24,6 +24,7 @@ public:
 
 	void openFile();
 	void saveFile();
+	void exportFile();
 };
 
 #endif
