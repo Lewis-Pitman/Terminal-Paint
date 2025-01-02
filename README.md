@@ -9,4 +9,4 @@
  - Fill tool
  
  # Demo
-![Paint Demo Gif](https://github.com/user-attachments/assets/681c35b1-6bfa-4416-aaa0-8bf9ba37764d)
+![Drawing demo](https://github.com/user-attachments/assets/dcbfda04-3f36-42ee-af11-12efb57f6aa5)
