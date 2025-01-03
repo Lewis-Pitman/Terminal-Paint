@@ -36,8 +36,6 @@ public:
 
 	void drawScreen(commandScreenType commandType); //Used to control the command screen (Whether it displays root, file, colour etc)
 	void drawScreen(std::string message); //Used for pop-up dialogue above the main screen
-	void drawScreen(std::string aboveMessage, std::string title, std::string mainMessage); //Used for dialogue overlay on main screen
-	void resizeMainView();
 
 private:
 	//Misc-----------------------------------------------------
@@ -53,8 +51,6 @@ private:
 
 	//Main View------------------------------------------------
 	void drawMainView();
-	void drawMainView(std::string title, std::string description); //Alert box in centre of screen
-	void resizeMainView(int width, int height);
 };
 
 #endif

@@ -24,14 +24,11 @@ File::~File() {
 }
 
 bool File::openFile(std::string directory) {
-    File* currentFile = this;
     std::ifstream file("C:/Users/Lewis/Desktop/Code projects/open.TPAINT"); //Test directory, will be changed in final build
     std::string line;
-    consoleColour* newPixels = nullptr;
     int lineNumber = 0;
 
-    int width = 0;
-    int height = 0;
+    delete[] pixels;
 
     if (file.is_open()) {
         try {
@@ -42,20 +39,16 @@ bool File::openFile(std::string directory) {
                 }
                 else if (lineNumber == 1) {
                     height = std::stoi(line);
-                    newPixels = new consoleColour[width * height];
+                    pixels = new consoleColour[width * height];
                     lineNumber++;
                 }
                 else {
 
-                    newPixels[lineNumber - 2] = consoleColour(std::stoi(line));
+                    pixels[lineNumber - 2] = consoleColour(std::stoi(line));
 
                     lineNumber++;
                 }
             }
-
-            File* newFile = new File(width, height, newPixels);
-            delete currentFile;
-            currentFile = newFile;
             return true;
         }
         catch (const std::exception& e) {

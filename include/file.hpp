@@ -15,8 +15,8 @@
 class File {
 public:
 	consoleColour* pixels;
-	const int width;
-	const int height;
+	int width;
+	int height;
 
 public:
 	File(int fileWidth, int fileHeight);

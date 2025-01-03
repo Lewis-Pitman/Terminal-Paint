@@ -22,11 +22,11 @@ private:
 	Tool* currentTool;
 
 	//Variables
-	commandScreenType currentCommandScreen{root};
+	commandScreenType currentCommandScreen{ root };
 	consoleColour currentColour{ red };
 
-	bool erasing;
-	consoleColour erasingTemp{white};
+	bool erasing{ false };
+	consoleColour erasingTemp{ white };
 
 	std::string rootDirectory = std::filesystem::current_path().root_path().string();
 	std::string tpaintSavesDirectory = rootDirectory + "\\TPAINT saves";
