@@ -1,4 +1,5 @@
 #include <fstream> //Combo of ofstream and ifstream -> Reads and writes to files
+#include <filesystem>
 #include <cstdint>
 #include <string>
 
@@ -24,42 +25,45 @@ File::~File() {
 }
 
 bool File::openFile(std::string directory) {
-    std::ifstream file("C:/Users/Lewis/Desktop/Code projects/open.TPAINT"); //Test directory, will be changed in final build
-    std::string line;
-    int lineNumber = 0;
+    if (std::filesystem::exists(directory)) {
+        std::ifstream file(directory);
+        std::string line;
+        int lineNumber = 0;
 
-    delete[] pixels;
 
-    if (file.is_open()) {
-        try {
-            while (std::getline(file, line)) {
-                if (lineNumber == 0) {
-                    width = std::stoi(line);
-                    lineNumber++;
+        delete[] pixels;
+
+        if (file.is_open()) {
+            try {
+                while (std::getline(file, line)) {
+                    if (lineNumber == 0) {
+                        width = std::stoi(line);
+                        lineNumber++;
+                    }
+                    else if (lineNumber == 1) {
+                        height = std::stoi(line);
+                        pixels = new consoleColour[width * height];
+                        lineNumber++;
+                    }
+                    else {
+
+                        pixels[lineNumber - 2] = consoleColour(std::stoi(line));
+
+                        lineNumber++;
+                    }
                 }
-                else if (lineNumber == 1) {
-                    height = std::stoi(line);
-                    pixels = new consoleColour[width * height];
-                    lineNumber++;
-                }
-                else {
-
-                    pixels[lineNumber - 2] = consoleColour(std::stoi(line));
-
-                    lineNumber++;
-                }
+                return true;
             }
-            return true;
-        }
-        catch (const std::exception& e) {
-            return false;
+            catch (const std::exception& e) {
+                return false;
+            }
         }
     }
     return false;
 }
 
 void File::saveFile(std::string directory) {
-    std::ofstream file("C:/Users/Lewis/Desktop/Code projects/SAVED.TPAINT"); //Test directory, will be changed in final build
+    std::ofstream file(directory);
 
     if (file.is_open()) {
         //Header containing width and height
@@ -81,7 +85,7 @@ void File::saveFile(std::string directory) {
 void File::exportFile(std::string directory) {
     //Exports the created image to a BMP
 
-    std::ofstream file("C:/Users/Lewis/Desktop/Code projects/exported.bmp", std::ios::binary);
+    std::ofstream file(directory, std::ios::binary);
 
     //Calculate the size of one row (width * 3 for RGB)
     std::uint32_t rowSize = width * 3;

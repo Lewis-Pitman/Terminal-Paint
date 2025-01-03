@@ -86,11 +86,27 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 			if (temp == "y" || temp == "Y") {
 				int newWidth = 0;
 				currentScreen->drawScreen("Enter the width of the file (Max 45)");
-				std::cin >> newWidth;
+				std::cin >> temp;
+				try {
+					newWidth = std::stoi(temp);
+				}
+				catch (const std::exception&) {
+					currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+					std::cin >> temp;
+					break;
+				}
 
 				int newHeight = 0;
-				currentScreen->drawScreen("Enter the height of the file (Max 45");
-				std::cin >> newHeight;
+				currentScreen->drawScreen("Enter the height of the file (Max 45)");
+				std::cin >> temp;
+				try {
+					newHeight = std::stoi(temp);
+				}
+				catch (const std::exception&) {
+					currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+					std::cin >> temp;
+					break;
+				}
 
 				if (newWidth > 45 || newHeight > 45 || newWidth < 1 || newHeight < 1) {
 					currentScreen->drawScreen("Invalid. X & Y cannot be less than 1 or bigger than 45. Enter anything to dismiss");
@@ -112,10 +128,15 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 			if (temp == "y" || temp == "Y") {
 				currentScreen->drawScreen("Enter the name of the file as it appears in the folder TPAINT saves");
 				std::cin >> temp;
-				currentFile->openFile(tpaintSavesDirectory + temp + ".TPAINT");
 
-				delete currentScreen;
-				currentScreen = new Screen(currentFile);
+				if (currentFile->openFile(tpaintSavesDirectory + temp + ".TPAINT")) {
+					delete currentScreen;
+					currentScreen = new Screen(currentFile);
+				}
+				else {
+					currentScreen->drawScreen("Error. Name is case sensitive, and don't include .TPAINT. Enter anything to dismiss.");
+					std::cin >> temp;
+				}
 			}
 			break;
 		case saveCommand:
@@ -148,32 +169,126 @@ void Paint::handleInput(std::string command, commandScreenType availableCommands
 			break;
 		case brushCommand:
 			currentScreen->drawScreen("Please enter the X coordinate of the pixel you'd like to brush");
-			std::cin >> inputtedCoordinates.first;
+			std::cin >> temp;
+			try {
+				inputtedCoordinates.first = std::stoi(temp);
+			}
+			catch (const std::exception&) {
+				currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+				std::cin >> temp;
+				break;
+			}
 			currentScreen->drawScreen("Please enter the Y coordinate of the pixel you'd like to brush");
-			std::cin >> inputtedCoordinates.second;
+			std::cin >> temp;
+			try {
+				inputtedCoordinates.second = std::stoi(temp);
+			}
+			catch (const std::exception&) {
+				currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+				std::cin >> temp;
+				break;
+			}
 
-			currentTool->fillSquare(inputtedCoordinates.first, inputtedCoordinates.second, currentFile, currentColour);
+			if (inputtedCoordinates.first >= 1 && inputtedCoordinates.first <= currentFile->width &&
+				inputtedCoordinates.second >= 1 && inputtedCoordinates.second <= currentFile->height) {
+				currentTool->fillSquare(inputtedCoordinates.first, inputtedCoordinates.second, currentFile, currentColour);
+			}
+			else {
+				currentScreen->drawScreen("Coordinates provided weren't valid. Enter anything to dismiss");
+				std::cin >> temp;
+			}
 			break;
+
 		case lineCommand:
 			currentScreen->drawScreen("Please enter the X coordinate of the start pixel");
-			std::cin >> startPixelCoords.first;
+			std::cin >> temp;
+			try {
+				startPixelCoords.first = std::stoi(temp);
+			}
+			catch (const std::exception&) {
+				currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+				std::cin >> temp;
+				break;
+			}
 			currentScreen->drawScreen("Please enter the Y coordinate of the start pixel");
-			std::cin >> startPixelCoords.second;
+			std::cin >> temp;
+			try {
+				startPixelCoords.second = std::stoi(temp);
+			}
+			catch (const std::exception&) {
+				currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+				std::cin >> temp;
+				break;
+			}
 
-			currentScreen->drawScreen("Please enter the X coordinate of the end pixel");
-			std::cin >> endPixelCoords.first;
-			currentScreen->drawScreen("Please enter the Y coordinate of the end pixel");
-			std::cin >> endPixelCoords.second;
+			if (startPixelCoords.first >= 1 && startPixelCoords.first <= currentFile->width &&
+				startPixelCoords.second >= 1 && startPixelCoords.second <= currentFile->height) {
+				currentScreen->drawScreen("Please enter the X coordinate of the end pixel");
+				std::cin >> temp;
+				try {
+					endPixelCoords.first = std::stoi(temp);
+				}
+				catch (const std::exception&) {
+					currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+					std::cin >> temp;
+					break;
+				}
+				currentScreen->drawScreen("Please enter the Y coordinate of the end pixel");
+				std::cin >> temp;
+				try {
+					endPixelCoords.second = std::stoi(temp);
+				}
+				catch (const std::exception&) {
+					currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+					std::cin >> temp;
+					break;
+				}
 
-			currentTool->lineTool(startPixelCoords, endPixelCoords, currentFile, currentColour);
+				if (endPixelCoords.first >= 1 && endPixelCoords.first <= currentFile->width &&
+					endPixelCoords.second >= 1 && endPixelCoords.second <= currentFile->height) {
+					currentTool->lineTool(startPixelCoords, endPixelCoords, currentFile, currentColour);
+				}
+				else {
+					currentScreen->drawScreen("Coordinates provided weren't valid. Enter anything to dismiss");
+					std::cin >> temp;
+				}
+			}
+			else {
+				currentScreen->drawScreen("Coordinates provided weren't valid. Enter anything to dismiss");
+				std::cin >> temp;
+			}
 			break;
+
 		case fillCommand:
 			currentScreen->drawScreen("Please enter the X coordinate of the pixel you'd like to fill");
-			std::cin >> inputtedCoordinates.first;
+			std::cin >> temp;
+			try {
+				inputtedCoordinates.first = std::stoi(temp);
+			}
+			catch (const std::exception&) {
+				currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+				std::cin >> temp;
+				break;
+			}
 			currentScreen->drawScreen("Please enter the Y coordinate of the pixel you'd like to fill");
-			std::cin >> inputtedCoordinates.second;
+			std::cin >> temp;
+			try {
+				inputtedCoordinates.second = std::stoi(temp);
+			}
+			catch (const std::exception&) {
+				currentScreen->drawScreen("Please enter a number. Enter anything to dismiss");
+				std::cin >> temp;
+				break;
+			}
 
-			currentTool->fillTool(inputtedCoordinates.first, inputtedCoordinates.second, currentFile, currentColour);
+			if (inputtedCoordinates.first >= 1 && inputtedCoordinates.first <= currentFile->width &&
+				inputtedCoordinates.second >= 1 && inputtedCoordinates.second <= currentFile->height) {
+				currentTool->fillTool(inputtedCoordinates.first, inputtedCoordinates.second, currentFile, currentColour);
+			}
+			else {
+				currentScreen->drawScreen("Coordinates provided weren't valid. Enter anything to dismiss");
+				std::cin >> temp;
+			}
 			break;
 		case eraseCommand:
 			if (erasing) {

@@ -28,9 +28,9 @@ private:
 	bool erasing{ false };
 	consoleColour erasingTemp{ white };
 
-	std::string rootDirectory = std::filesystem::current_path().root_path().string();
-	std::string tpaintSavesDirectory = rootDirectory + "\\TPAINT saves";
-	std::string bmpExportsDirectory = rootDirectory + "\\BMP exports";
+	std::string rootDirectory = std::filesystem::current_path().string();
+	std::string tpaintSavesDirectory = rootDirectory + "\\TPAINT saves\\";
+	std::string bmpExportsDirectory = rootDirectory + "\\BMP exports\\";
 
 	//Command map for processing input
 	std::unordered_map<std::string, command> commandMap = {
